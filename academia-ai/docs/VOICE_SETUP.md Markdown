@@ -1,0 +1,6 @@
+# Voice Cloning Setup
+
+1. Go to `/voice/setup`
+2. Read the displayed text aloud.
+3. Upload the recording.
+4. System creates your cloned voice model.
