@@ -13,6 +13,9 @@ from routers.assignments import router as assignments_router
 from routers.auth import router as auth_router
 from routers.webrtc import router as webrtc_router
 from routers.transcription import router as transcription_router
+from routers.lesson_planner import router as lesson_router
+from routers.gamification import router as gamification_router
+from routers.engagement import router as engagement_router
 
 load_dotenv()
 
@@ -26,19 +29,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(admin_router)
-app.include_router(classes_router)
-app.include_router(voice_router)
-app.include_router(payment_router)
-app.include_router(diagnostics_router)
-app.include_router(ws_router)
-app.include_router(assignments_router)
-app.include_router(auth_router)
-app.include_router(webrtc_router)
-app.include_router(transcription_router)
+for router in [admin_router, classes_router, voice_router, payment_router, diagnostics_router, ws_router, assignments_router, auth_router, webrtc_router, transcription_router, lesson_router, gamification_router, engagement_router]:
+    app.include_router(router)
 
 llm = LLMRouter()
 
 @app.get("/")
 async def root():
-    return {"message": "Academia AI is fully operational. Sir."}
+    return {"message": "Academia AI - AI Teacher is ready for class. Sir."}
