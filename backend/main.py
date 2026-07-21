@@ -9,15 +9,15 @@ from routers.payment import router as payment_router
 from routers.diagnostics import router as diagnostics_router
 from routers.websocket import router as ws_router
 from routers.assignments import router as assignments_router
+from routers.auth import router as auth_router
 
 load_dotenv()
 
 app = FastAPI(title="Academia AI")
 
-# CORS Fix
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to specific domains in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,6 +30,7 @@ app.include_router(payment_router)
 app.include_router(diagnostics_router)
 app.include_router(ws_router)
 app.include_router(assignments_router)
+app.include_router(auth_router)
 
 llm = LLMRouter()
 
