@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File
-from ..voice_cloning import capture_voice_sample
+from voice_cloning import capture_voice_sample
 
 router = APIRouter(prefix="/voice", tags=["voice"])
 
