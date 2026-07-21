@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from llm_router import LLMRouter
 from routers.admin import router as admin_router
@@ -13,6 +14,15 @@ load_dotenv()
 
 app = FastAPI(title="Academia AI")
 
+# CORS Fix
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Change to specific domains in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(admin_router)
 app.include_router(classes_router)
 app.include_router(voice_router)
@@ -25,4 +35,4 @@ llm = LLMRouter()
 
 @app.get("/")
 async def root():
-    return {"message": "Academia AI Backend is live."}
+    return {"message": "Academia AI Backend is live. Sir."}
