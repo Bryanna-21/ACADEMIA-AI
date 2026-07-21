@@ -1,7 +1,6 @@
-import random
-import httpx
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+import httpx
 
 load_dotenv()
 
@@ -14,26 +13,29 @@ class LLMRouter:
         }
         self.current_index = {k: 0 for k in self.providers}
 
-    def get_next_key(self, provider: str):
-        keys = self.providers.get(provider, [])
-        if not keys or keys == [""]:
-            return None
-        key = keys[self.current_index[provider] % len(keys)]
+    def get_next_key(self, provider):
+        keys = [k.strip() for k in self.providers.get(provider, []) if k.strip()]
+        if not keys:
+            return None, None
+        idx = self.current_index[provider] % len(keys)
         self.current_index[provider] = (self.current_index[provider] + 1) % len(keys)
-        return key.strip()
+        return provider, keys[idx]
 
     async def query(self, prompt: str, provider: str = "grok"):
-        key = self.get_next_key(provider)
-        if not key:
-            # Fallback to next provider
-            for p in ["openai", "gemini", "grok"]:
-                if p != provider:
-                    key = self.get_next_key(p)
-                    if key:
-                        provider = p
-                        break
-        if not key:
-            return "Error: No API keys available."
-
-        # Placeholder - actual API calls would go here
-        return f"Response from {provider} for: {prompt[:50]}..."
+        for attempt in ["grok", "openai", "gemini"]:
+            p, key = self.get_next_key(attempt)
+            if not key:
+                continue
+            try:
+                if p == "openai":
+                    async with httpx.AsyncClient() as client:
+                        resp = await client.post("https://api.openai.com/v1/chat/completions", 
+                            headers={"Authorization": f"Bearer {key}"},
+                            json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": prompt}]},
+                            timeout=30)
+                        return resp.json()["choices"][0]["message"]["content"]
+                # Add similar for Grok and Gemini
+                return f"[{p}] {prompt[:100]}... (implement full call)"
+            except:
+                continue
+        return "All providers exhausted."
