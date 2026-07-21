@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from ..llm_router import LLMRouter
+from llm_router import LLMRouter
 
 router = APIRouter(prefix="/assignments", tags=["assignments"])
 llm = LLMRouter()
